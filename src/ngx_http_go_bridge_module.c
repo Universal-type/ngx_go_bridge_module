@@ -56,14 +56,17 @@ static ngx_int_t ngx_http_go_bridge_handler(ngx_http_request_t *r) {
         return NGX_DECLINED;
     }
 
-    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "%s",
-            tlcf->go_bridge->dl_name);
-
     // TODO
     // Call go function and set response
+    u_char response_body[] = {'a', 'b', 'c', '\n', '\0'};
+    ngx_str_t content_type = ngx_string("text/plain");
 
-    ngx_http_finalize_request(r, NGX_DONE);
-    return NGX_DONE;
+    ngx_http_complex_value_t cv;
+    ngx_memzero(&cv, sizeof(ngx_http_complex_value_t));
+    cv.value.len = sizeof(&response_body);
+    cv.value.data = response_body;
+
+    return ngx_http_send_response(r, NGX_HTTP_OK, &content_type, &cv);
 }
 
 static char *
